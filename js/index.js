@@ -2,14 +2,19 @@
 
 function render(cityCode) {
 
+  // Get current weather
 
   axios({
-    url: 'https://api.weatherapi.com/v1/forecast.json?key=824c546553e34041b72135429240109&q=London&days=1&aqi=no&alerts=no',
+    url: 'http://api.weatherapi.com/v1/forecast.json',
     params: {
-      q: cityCode
+      key: '824c546553e34041b72135429240109',
+      q: cityCode,
+      hours: 7 // Retrieve the next 7 hours of weather
     }
   }).then(result => {
-    console.log(result)
+    console.log(result.data);
+
+    // console.log(result)
 
     // Top box
     document.querySelector('.top-box').innerHTML = `
@@ -34,7 +39,8 @@ function render(cityCode) {
     `
 
 
-    // Weather-box
+    // Big Weather-box
+
     document.querySelector('.weather-box').innerHTML = `
       <div class="tem-box">
         <span class="temp">
@@ -62,6 +68,7 @@ function render(cityCode) {
 
 
     // Today
+
     document.querySelector('.today-weather').innerHTML = `
       <div class="range-box">
         <span>Today</span>
@@ -93,38 +100,60 @@ function render(cityCode) {
       </ul>
     `
 
-    // Weather forecast for 7 hours
 
-    const index= result.data.forecast.forecastday[0]
-    const hourForecast = result.data.forecast.forecastday[0].hour.splice(index, 7)
-    console.log((hourForecast));
+    // Get next 7 hour forecast weather
 
-    const hourForecastStr = hourForecast.map(item => {
-      console.log(item)
-      return `<li class="item">
+    // Get current hour
+    const currentHour = new Date(result.data.current.last_updated).getHours()
+    console.log(currentHour)
+
+    // Get a 24-hour forecast array
+    const hourForecast = result.data.forecast.forecastday[0].hour
+    // console.log((hourForecast));
+
+    // Get the current hour index
+    const startIndex = hourForecast.findIndex(hour => {
+      return new Date(hour.time).getHours() === currentHour
+    })
+
+    // Get a 7-hour forecast array since current
+    const next7Hours = hourForecast.splice(startIndex, 7)
+    console.log(next7Hours)
+
+
+    const hourForecastStr = next7Hours.map(item => {
+      // console.log(item)
+      const itemHour = new Date(item.time).getHours()
+
+      const displayHour = itemHour === currentHour ? 'Now' : itemHour
+
+      return `
+      <li class="item">
         <div class="date-box">
-          <span class="dateFormat">${item.time}</span>
-          <span class="date">Date</span>
+          <span class="dateFormat">${displayHour}</span>
+          </div>
+          <img src=${item.condition.icon} alt="" class="weatherImg">
+          <!-- <span class="weather">Cloudy</span> -->
+          <span class="weather">${item.condition.text}</span>
+        <div class="temp">
+          <span class="temNight">${item.temp_c}</span>
+          <span>℃</span>
         </div>
-        <img src="./imgs/多云.png" alt="" class="weatherImg">
-          <span class="weather">Cloudy</span>
-          <div class="temp">
-            <span class="temNight">12</span>-
-            <span class="temDay">12</span>
-            <span>℃</span>
-          </div>
-          <div class="wind">
-            <span class="windDirection">Wind</span>
-            <span class="windPower">&lt;Wind index</span>
-          </div>
+        <div class="wind">
+          <span class="windDirection">Humidity</span>
+          <span class="windPower">${item.humidity}</span>
+        </div>
       </li>`
     }).join('')
 
     document.querySelector('.week-wrap').innerHTML = hourForecastStr
 
-  })
+  }).catch(error => {
+    // console.error('Error:', error.result ? error.result.data : error.message);
+  });
+
 
 
 }
 
-render('DE15 6QW')
+render('SE15 6QW')
