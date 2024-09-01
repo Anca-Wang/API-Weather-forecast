@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/index.css">
+  <title>Weather Report</title>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Time and location -->
+    <div class="top-box">
+      <!-- Dynamically render current location and time from index.js -->
+    </div>
+
+
+    <!-- Current weather in summary -->
+    <div class="weather-box">
+      <!-- Dynamically render Current weather from index.js -->
+    </div>
+
+    <!-- Today's weather-->
+    <div class="today-weather">
+      <!-- Dynamically render Today's weather from index.js -->
+    </div>
+
+    <!-- Weather forecast within 7 hours -->
+    <div class="week-weather-box">
+      <div class="title">Weather Forecast in 7 hours</div>
+      <ul class="week-wrap">
+        <!-- Dynamically render weather Forecast in 7 hours from index.js -->
+      </ul>
+    </div>
+  </div>
+
+  <!-- Axios-->
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.0/axios.min.js"></script>
+
+  <!-- Search box -->
+  <script src="./js/search.js"></script>
+
+  <!-- Core js -->
+  <script src="./js/index.js"></script>
+
+</body>
+
+</html>
