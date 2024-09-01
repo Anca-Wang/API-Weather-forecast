@@ -5,7 +5,7 @@ function render(cityCode) {
   // Get current weather
 
   axios({
-    url: 'http://api.weatherapi.com/v1/forecast.json',
+    url: 'https://api.weatherapi.com/v1/forecast.json',
     params: {
       key: '824c546553e34041b72135429240109',
       q: cityCode,
