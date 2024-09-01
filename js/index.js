@@ -9,25 +9,25 @@ function render(cityCode) {
     params: {
       key: '824c546553e34041b72135429240109',
       q: cityCode,
+      days: 7,
       hours: 7 // Retrieve the next 7 hours of weather
     }
   }).then(result => {
-    console.log(result.data);
 
-    // console.log(result)
+    console.log(result.data);
 
     // Top box
     document.querySelector('.top-box').innerHTML = `
       <div class="title">
         <span class="dateShort">${result.data.current.last_updated}</span>
         <span class="calendar">&nbsp;
-          <span class="dateLunar">Region: ${result.data.location.region}</span>
+          <span class="dateLunar">${result.data.location.tz_id}</span>
         </span>
       </div>
       <div class="search-box">
         <div class="location">
           <img src="./imgs/定位.png" alt="">
-          <span class="area">${result.data.location.name}</span>
+          <span class="area">${result.data.location.region}</span>
         </div>
         <div class="search">
           <input type="text" class="search-city" placeholder="Search city">
@@ -105,26 +105,39 @@ function render(cityCode) {
 
     // Get current hour
     const currentHour = new Date(result.data.current.last_updated).getHours()
-    console.log(currentHour)
+    // console.log(currentHour)
 
     // Get a 24-hour forecast array
     const hourForecast = result.data.forecast.forecastday[0].hour
-    // console.log((hourForecast));
+    // console.log(hourForecast)
 
-    // Get the current hour index
-    const startIndex = hourForecast.findIndex(hour => {
-      return new Date(hour.time).getHours() === currentHour
-    })
+    let next7Hours = []
 
-    // Get a 7-hour forecast array since current
-    const next7Hours = hourForecast.splice(startIndex, 7)
-    console.log(next7Hours)
+    if (currentHour + 7 > 24) {
 
+      // Define remaining hours of today
+      const remainingHours = 24 - currentHour
+      // console.log(remainingHours)
 
+      // Get the rest hours from the next day
+      const nextDayHours = result.data.forecast.forecastday[1].hour.slice(0, 7 - remainingHours)
+      // console.log(nextDayHours)
+
+      // Concatenate today's remaining hours with next day's hours
+      next7Hours = hourForecast.slice(currentHour).concat(nextDayHours)
+
+    } else {
+
+      // Get next 7 hours from today
+      next7Hours = hourForecast.slice(currentHour, currentHour + 7)
+
+    }
+
+    // Loop through every element inside the next7Hours Array
     const hourForecastStr = next7Hours.map(item => {
-      // console.log(item)
-      const itemHour = new Date(item.time).getHours()
 
+      // If the item hour equals current hour, show Now instead of item hour
+      const itemHour = new Date(item.time).getHours()
       const displayHour = itemHour === currentHour ? 'Now' : itemHour
 
       return `
