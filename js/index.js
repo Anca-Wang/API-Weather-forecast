@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     1006: './imgs/1006.png', // cloudy
     1009: './imgs/1006.png', // cloudy
     1030: './imgs/1030.png', // mist
-    1063: './imgs/1003.png', // patchy possible
-    1066: './imgs/1003.png',
-    1069: './imgs/1003.png',
-    1072: './imgs/1003.png',
-    1087: './imgs/1003.png',
+    1063: './imgs/1006.png', // patchy possible
+    1066: './imgs/1006.png',
+    1069: './imgs/1006.png',
+    1072: './imgs/1006.png',
+    1087: './imgs/1240.png',
     1114: './imgs/1114.png', // blowing snow 
     1117: './imgs/1114.png',
     1135: './imgs/1030.png', // mist
