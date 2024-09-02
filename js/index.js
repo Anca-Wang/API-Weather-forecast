@@ -1,5 +1,57 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Customise weather icons
+  const iconMap = {
+    1000: './imgs/1000.png', // sunny
+    1003: './imgs/1003.png', // partially cloudy
+    1006: './imgs/1006.png', // cloudy
+    1009: './imgs/1006.png', // cloudy
+    1030: './imgs/1030.png', // mist
+    1063: './imgs/1003.png', // patchy possible
+    1066: './imgs/1003.png',
+    1069: './imgs/1003.png',
+    1072: './imgs/1003.png',
+    1087: './imgs/1003.png',
+    1114: './imgs/1114.png', // blowing snow 
+    1117: './imgs/1114.png',
+    1135: './imgs/1030.png', // mist
+    1147: './imgs/1030.png', // mist
+    1150: './imgs/1150.png', // drizzle
+    1153: './imgs/1150.png', // drizzle
+    1168: './imgs/1168.png', // freezing drizzle
+    1171: './imgs/1168.png', // freezing drizzle
+    1180: './imgs/1150.png', // light rain
+    1183: './imgs/1150.png', // light rain
+    1186: './imgs/1150.png', // light rain
+    1189: './imgs/1192.png', // heavy rain
+    1192: './imgs/1192.png', // heavy rain
+    1195: './imgs/1192.png', // heavy rain
+    1198: './imgs/1198.png', // light freezing rain
+    1201: './imgs/1150.png', // heavy freezing rain
+    1204: './imgs/1198.png', // sleet
+    1207: './imgs/1198.png', // sleet
+    1210: './imgs/1213.png', // snow
+    1213: './imgs/1213.png', // snow
+    1216: './imgs/1213.png', // snow
+    1219: './imgs/1213.png', // snow
+    1222: './imgs/1213.png', // snow
+    1225: './imgs/1213.png', // snow
+    1237: './imgs/1150.png', // light rain
+    1240: './imgs/1240.png', // cloudy thunder
+    1243: './imgs/1240.png', // cloudy thunder
+    1246: './imgs/1240.png', // cloudy thunder
+    1249: './imgs/1240.png', // cloudy thunder
+    1252: './imgs/1240.png', // cloudy thunder
+    1258: './imgs/1240.png', // cloudy thunder
+    1261: './imgs/1240.png', // cloudy thunder
+    1264: './imgs/1240.png', // cloudy thunder
+    1273: './imgs/1240.png', // cloudy thunder
+    1276: './imgs/1240.png', // cloudy thunder
+    1279: './imgs/1240.png', // cloudy thunder
+    1282: './imgs/1240.png', // cloudy thunder
+
+  };
+
 
   function render(cityCode) {
 
@@ -16,6 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }).then(result => {
 
       // console.log(result.data);
+
+      // Customize icons
+      const icon = iconMap[result.data.current.condition.code]
+      // console.log(result.data.current.condition.code);
+
 
       // Date String
       const dateStr = `
@@ -37,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="temp">
         <span class="temperature">${result.data.current.temp_c}</span>
         <span>°</span>
-        <img src=${result.data.current.condition.icon} class="weatherImg" alt="">
+        <img src=${icon} class="weatherImg" alt="">
         </span>
       </div>
       <div class="climate-box">
@@ -90,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </ul>
       `
 
-
       // Get next 7 hours forecast weather
 
       // Get current hour
@@ -129,25 +185,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // If the item hour equals current hour, show Now instead of item hour
         const itemHour = new Date(item.time).getHours()
         const displayHour = itemHour === currentHour ? 'Now' : itemHour
+        const fIcon = iconMap[item.condition.code]
+
+        console.log(fIcon);
 
         return `
-      <li class="item">
-        <div class="date-box">
-          <span class="dateFormat">${displayHour}</span>
+        <li class="item">
+          <div class="date-box">
+            <span class="dateFormat">${displayHour}</span>
+            </div>
+            <img src=${fIcon} alt="" class="weatherImg">
+            <span class="weather">${item.condition.text}</span>
+          <div class="temp">
+            <span class="temNight">${item.temp_c}</span>
+            <span>℃</span>
           </div>
-          <img src='imgs/有云.png' alt="" class="weatherImg">
-          <!-- <img src=${item.condition.icon} alt="" class="weatherImg"> -->
-          <!-- <span class="weather">Cloudy</span> -->
-          <span class="weather">${item.condition.text}</span>
-        <div class="temp">
-          <span class="temNight">${item.temp_c}</span>
-          <span>℃</span>
-        </div>
-        <div class="wind">
-          <span class="windDirection">Humidity</span>
-          <span class="windPower">${item.humidity}</span>
-        </div>
-      </li>`
+          <div class="wind">
+            <span class="windDirection">Humidity</span>
+            <span class="windPower">${item.humidity}</span>
+          </div>
+        </li>`
       }).join('')
 
       document.querySelector('.week-wrap').innerHTML = hourForecastStr
