@@ -1,47 +1,38 @@
+document.addEventListener('DOMContentLoaded', () => {
 
 
-function render(cityCode) {
+  function render(cityCode) {
 
-  // Get current weather
+    // Get current weather
 
-  axios({
-    url: 'https://api.weatherapi.com/v1/forecast.json',
-    params: {
-      key: '824c546553e34041b72135429240109',
-      q: cityCode,
-      days: 7,
-      hours: 7 // Retrieve the next 7 hours of weather
-    }
-  }).then(result => {
+    axios({
+      url: 'https://api.weatherapi.com/v1/forecast.json',
+      params: {
+        key: '824c546553e34041b72135429240109',
+        q: cityCode,
+        days: 7, // Retrieve next 7 days
+        hours: 7 // Retrieve next 7 hours
+      }
+    }).then(result => {
 
-    console.log(result.data);
+      // console.log(result.data);
 
-    // Top box
-    document.querySelector('.top-box').innerHTML = `
-      <div class="title">
+      // Date String
+      const dateStr = `
         <span class="dateShort">${result.data.current.last_updated}</span>
         <span class="calendar">&nbsp;
-          <span class="dateLunar">${result.data.location.tz_id}</span>
+          <span class="dateLunar">${result.data.location.region}</span>
         </span>
-      </div>
-      <div class="search-box">
-        <div class="location">
-          <img src="./imgs/定位.png" alt="">
-          <span class="area">${result.data.location.region}</span>
-        </div>
-        <div class="search">
-          <input type="text" class="search-city" placeholder="Search city">
-          <ul class="search-list">
-            <li class="city-item">London</li>
-          </ul>
-        </div>
-      </div>
-    `
+      `
+      document.querySelector('.title').innerHTML = dateStr
+
+      // City Name
+      document.querySelector('.area').innerHTML = result.data.location.tz_id
 
 
-    // Big Weather-box
+      // Big Weather-box
 
-    document.querySelector('.weather-box').innerHTML = `
+      document.querySelector('.weather-box').innerHTML = `
       <div class="tem-box">
         <span class="temp">
         <span class="temperature">${result.data.current.temp_c}</span>
@@ -64,12 +55,11 @@ function render(cityCode) {
           <li class="windPower">${result.data.current.feelslike_c}</li>
         </ul>
       </div>
-    `
+      `
 
+      // Today
 
-    // Today
-
-    document.querySelector('.today-weather').innerHTML = `
+      document.querySelector('.today-weather').innerHTML = `
       <div class="range-box">
         <span>Today</span>
         <span class="range">&nbsp;&nbsp;
@@ -98,54 +88,55 @@ function render(cityCode) {
           <span class="sunsetTime">${result.data.forecast.forecastday[0].astro.sunset}</span>
         </li>
       </ul>
-    `
+      `
 
 
-    // Get next 7 hour forecast weather
+      // Get next 7 hours forecast weather
 
-    // Get current hour
-    const currentHour = new Date(result.data.current.last_updated).getHours()
-    // console.log(currentHour)
+      // Get current hour
+      const currentHour = new Date(result.data.current.last_updated).getHours()
+      // console.log(currentHour)
 
-    // Get a 24-hour forecast array
-    const hourForecast = result.data.forecast.forecastday[0].hour
-    // console.log(hourForecast)
+      // Get a 24-hour forecast array
+      const hourForecast = result.data.forecast.forecastday[0].hour
+      // console.log(hourForecast)
 
-    let next7Hours = []
+      let next7Hours = []
 
-    if (currentHour + 7 > 24) {
+      if (currentHour + 7 > 24) {
 
-      // Define remaining hours of today
-      const remainingHours = 24 - currentHour
-      // console.log(remainingHours)
+        // Define remaining hours of today
+        const remainingHours = 24 - currentHour
+        // console.log(remainingHours)
 
-      // Get the rest hours from the next day
-      const nextDayHours = result.data.forecast.forecastday[1].hour.slice(0, 7 - remainingHours)
-      // console.log(nextDayHours)
+        // Get the rest hours from the next day
+        const nextDayHours = result.data.forecast.forecastday[1].hour.slice(0, 7 - remainingHours)
+        // console.log(nextDayHours)
 
-      // Concatenate today's remaining hours with next day's hours
-      next7Hours = hourForecast.slice(currentHour).concat(nextDayHours)
+        // Concatenate today's remaining hours with next day's hours
+        next7Hours = hourForecast.slice(currentHour).concat(nextDayHours)
 
-    } else {
+      } else {
 
-      // Get next 7 hours from today
-      next7Hours = hourForecast.slice(currentHour, currentHour + 7)
+        // Get next 7 hours from today
+        next7Hours = hourForecast.slice(currentHour, currentHour + 7)
 
-    }
+      }
 
-    // Loop through every element inside the next7Hours Array
-    const hourForecastStr = next7Hours.map(item => {
+      // Loop through every element inside the next7Hours Array
+      const hourForecastStr = next7Hours.map(item => {
 
-      // If the item hour equals current hour, show Now instead of item hour
-      const itemHour = new Date(item.time).getHours()
-      const displayHour = itemHour === currentHour ? 'Now' : itemHour
+        // If the item hour equals current hour, show Now instead of item hour
+        const itemHour = new Date(item.time).getHours()
+        const displayHour = itemHour === currentHour ? 'Now' : itemHour
 
-      return `
+        return `
       <li class="item">
         <div class="date-box">
           <span class="dateFormat">${displayHour}</span>
           </div>
-          <img src=${item.condition.icon} alt="" class="weatherImg">
+          <img src='imgs/有云.png' alt="" class="weatherImg">
+          <!-- <img src=${item.condition.icon} alt="" class="weatherImg"> -->
           <!-- <span class="weather">Cloudy</span> -->
           <span class="weather">${item.condition.text}</span>
         <div class="temp">
@@ -157,16 +148,62 @@ function render(cityCode) {
           <span class="windPower">${item.humidity}</span>
         </div>
       </li>`
-    }).join('')
+      }).join('')
 
-    document.querySelector('.week-wrap').innerHTML = hourForecastStr
+      document.querySelector('.week-wrap').innerHTML = hourForecastStr
 
-  }).catch(error => {
-    // console.error('Error:', error.result ? error.result.data : error.message);
-  });
+    }).catch(error => {
+      // console.error('Error:', error.result ? error.result.data : error.message);
+    })
+
+  }
+
+  // Render function calls
+  render('SE15 6QW')
 
 
 
-}
+  // Search Box Retrieval
 
-render('SE15 6QW')
+  document.querySelector('.search .search-city').addEventListener('input', (e) => {
+
+    console.log(e.target.value)
+
+    // Call search api
+    axios({
+      url: 'https://api.weatherapi.com/v1/search.json',
+      params: {
+        key: '824c546553e34041b72135429240109',
+        q: e.target.value
+      }
+    }).then(result => {
+
+      // Join the loop through search info according to user input
+      const searchStr = result.data.map(item => {
+        return `<li class="city-item" data-code="${item.name}">${item.name}</li>`
+      }).join('')
+
+      // Display the search date
+      document.querySelector('.search-list').innerHTML = searchStr
+    })
+
+  })
+
+
+  // Display and rerender the searched city
+
+  document.querySelector('.search-list').addEventListener('click', e => {
+
+    // If clicked one of the search list items
+    if (e.target.className = 'city-item') {
+
+      // Store the item code 
+      const q = e.target.dataset.code
+
+      // Re-render the page according to the item code
+      render(q)
+    }
+  })
+
+})
+
